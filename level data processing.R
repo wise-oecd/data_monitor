@@ -64,10 +64,13 @@ tiers_dat <- tidy_dat %>%
   left_join(dict %>% select(measure, direction)) %>%
   group_by(measure) %>%
   arrange(measure, obs_value) %>%
+  # Exposure to extreme temps has many 0s which unfairly skew the ranking
+  # Countries with 0 are not automatically tier 1
+  # Use min to ties.method, fixes for 12.4 and some other values as well
   mutate(rank =
            case_when(
-             direction == "positive" ~ rank(obs_value, ties.method = "random"),
-             TRUE ~ rank(-obs_value, ties.method = "random")
+             direction == "positive" ~ rank(obs_value, ties.method = "min"),
+             TRUE ~ rank(-obs_value, ties.method = "min")
            ),
          rank_max = max(rank)
   ) %>%
@@ -77,12 +80,6 @@ tiers_dat <- tidy_dat %>%
            share < 0.33 ~ 3,
            share > 0.66 ~ 1,
            TRUE ~ 2
-         ),
-         # Exposure to extreme temps has many 0s which unfairly skew the ranking
-         # Countries with 0 are not automatically tier 1
-         tiers = case_when(
-           measure == "9_3" & obs_value == 0 ~ 1,
-           TRUE ~ tiers
          )
   ) %>%
   ungroup() %>% 

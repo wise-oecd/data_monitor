@@ -1,8 +1,4 @@
-source("./global_processing.R")
-
 # Data wrangling packages
-# library(rlang, lib = "C:/Users/Chalmers_K/OneDrive - OECD/Bureau/lib")
-# library(cli, lib = "C:/Users/Chalmers_K/OneDrive - OECD/Bureau/lib")
 library(tidymodels)
 library(tidyverse)
 library(janitor)
@@ -27,6 +23,7 @@ library(parsnip)
 library(metrica)
 library(Hmisc)
 
+source("./global_processing.R")
 options(scipen=999)
 
 
@@ -100,9 +97,9 @@ bli_dat <- full_dat %>%
 
 rm(indic_gap_10_2)
 
-###########################################################################
+
 # DATA REPLACEMENT  -------------------------------------------------------
-###########################################################################
+
 
 # 3_1 Overcrowding rate ---------------------------------------------------
 # Note (14/10/25): to include 2016 value for Canada (this can be removed when value included in the database)
@@ -202,9 +199,10 @@ hsl_dat <- bli_dat %>%
 
 rm(complete_check, oecd_completes_previous, oecd_completes)
 
-###########################################################################
-# IMPUTATION CANDIDATES  ##################################################
-###########################################################################
+
+
+# IMPUTATION --------------------------------------------------------------
+
 
 # 1_1 HADI ----------------------------------------------------------------
 # Consistent - predictor: WB GINI linear model
@@ -264,11 +262,11 @@ rm(gni_dat, most_common_year_indic, countries_avail, partner_avail,
 
 # 1_2 S20/80 income share -------------------------------------------------
 # New 2025 - predictor: S80/S20 from UN WIDER WIID - source LISSY)
-#Predictor: S80S20 square root equivalised household net income from UN WIDER WIID 
+# Predictor: S80S20 square root equivalised household net income from UN WIDER WIID 
 # (S80S20, Gini and Palma plus other deciles available + various income definitions and transformations + multiple sources)
-#perfect correlation and all countries available (correlation with GINI strong, but not perfect) - 
-#Just one predictor to avoid collinearity/redundancy with others
-#priority given to data from LIS through LISSY for coherence 
+# perfect correlation and all countries available (correlation with GINI strong, but not perfect) - 
+# Just one predictor to avoid collinearity/redundancy with others
+# priority given to data from LIS through LISSY for coherence 
 
 # Download from : https://www.wider.unu.edu/database/world-income-inequality-database-wiid
 
@@ -937,5 +935,3 @@ if(versioning == "yes") {
   saveRDS(headline_final, paste0(mainpath, "/versioning/imputed_headline_dat", Sys.Date() %>% format("%Y-%m-%d"),".RDS"))
 }
 
-
-getwd()

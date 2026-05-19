@@ -177,7 +177,7 @@ tiers_dat <- full_dat %>%
   arrange(measure, dimension, obs_value) %>%
   mutate(rank =
            case_when(
-             direction == "positive" ~ rank(obs_value, ties.method = "random"),
+             direction == "positive" ~ rank(obs_value, ties.method = "min"),
              TRUE ~ rank(-obs_value, ties.method = "random")
            ),
          rank_max = max(rank)

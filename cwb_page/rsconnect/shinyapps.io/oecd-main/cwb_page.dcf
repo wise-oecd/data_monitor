@@ -5,7 +5,7 @@ account: oecd-main
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 15817704
-bundleId: 11790986
+bundleId: 12011763
 url: https://oecd-main.shinyapps.io/cwb_page/
 version: 1
 asMultiple: FALSE

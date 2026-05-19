@@ -112,6 +112,7 @@ skills_sig <- data.frame(ref_area = c(all_countries, "OECD")) %>%
   select(-sig) %>%
   rename(sig = value)
 
+# OECD averages pulled from source rather than calculated
 oecd_avg_dat <- readRDS("//main.oecd.org/sdataWIS/Data/WDP/Well being database/Automated database/output/final dataset.RDS") %>%
   filter(grepl("OECD", ref_area)) %>%
   arrange(measure, time_period) %>%
