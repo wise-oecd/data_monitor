@@ -5,7 +5,7 @@ account: oecd-main
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 15819490
-bundleId:
+bundleId: 12011827
 url: https://oecd-main.shinyapps.io/gap_page_fr/
 version: 1
 asMultiple: FALSE

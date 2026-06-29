@@ -168,7 +168,7 @@ server <- function(input, output, session) {
                  HTML("Number of well-being outcomes that have improved, shown no clear change or have deteriorated from 2015 to the latest available year:"),
                  br(),
                  fluidRow(
-                   column(4, style = "margin-top: 20px",
+                   column(4rf, style = "margin-top: 20px",
                           uiOutput(paste0(dim_label, "_summary_F")),
                           uiOutput(paste0(dim_label, "_summary_M"))
                    ),

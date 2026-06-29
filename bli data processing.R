@@ -909,7 +909,7 @@ scatterplotCompare(hsl_dat, avg_multi_year, "11_1")
 
 life_satis_imputed <- imputatorFunction(hsl_dat, avg_multi_year, "11_1", imputing_iso3c, model_type = "cont_group")
 
-#Imputed data only  & most common year chosen to be shown as time_period just as more practical than t-t-1
+# Imputed data only & most common year chosen to be shown as time_period just as more practical than t-t_1
 indic_11_1 <- life_satis_imputed$indic_dat %>% 
   mutate(obs_status= "E", time_period = most_common_year_indic11_1) %>%
   rbind(hsl_dat %>% filter(measure == "11_1"))
@@ -934,4 +934,9 @@ saveRDS(headline_final, paste0(mainpath, "/data/imputed_headline_dat.RDS"))
 if(versioning == "yes") {
   saveRDS(headline_final, paste0(mainpath, "/versioning/imputed_headline_dat", Sys.Date() %>% format("%Y-%m-%d"),".RDS"))
 }
+
+
+imputed_headline_dat <- readRDS("S:/Data/WDP/Well being database/Data Monitor/data_monitor/data/imputed_headline_dat.RDS")
+
+
 
