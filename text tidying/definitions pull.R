@@ -30,7 +30,8 @@ parse_block <- function(block) {
   
   # measures where the comma should NOT split indicator vs unit
   no_split <- c("1_4", "2_4", "2_5", "2_9", "3_2", "5_3", 
-                "11_1", "4_2", "4_3", "4_4", "7_3")   
+                "11_1", "4_2", "4_3", "4_4", "7_3", "13_2",
+                "12_1", "12_8", "13_5")   
   
   split_comma <- str_detect(ind_raw, ",") & !(measure %in% no_split)
   
@@ -138,6 +139,12 @@ result <- bind_rows(base, dep_rows, vert_rows) %>%
            TRUE ~ unit
          ),
          unit = str_remove_all(unit, "Measured in"),
+         unit = str_remove_all(unit, "Where "),
+         unit = str_remove_all(unit, "Corruption Perception Index score on a "),
+         unit = case_when(
+           measure == "12_8" ~ "Kilograms per capita, CO2 equivalent, thousands",
+           TRUE ~ unit,
+         ),
          unit = str_replace(unit, "^(.)", toupper),
          note = case_when(
            measure %in% c("1_3", "1_3_VER", "1_6", "8_2") ~ "The OECD average is calculated using a last observation carried forward approach, whereby each country’s most recent available observation is carried forward to 
