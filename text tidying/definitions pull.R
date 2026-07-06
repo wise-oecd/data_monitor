@@ -28,11 +28,16 @@ parse_block <- function(block) {
     str_extract("(?<=Indicator and unit of measurement:)[\\s\\S]*?(?=\nType of indicator:)") %>%
     str_replace_all("\\s+", " ") %>% trimws()
   
-  # Split indicator vs unit on first comma — if no comma, both are the same
-  indicator <- if_else(str_detect(ind_raw, ","),
+  # measures where the comma should NOT split indicator vs unit
+  no_split <- c("1_4", "2_4", "2_5", "2_9", "3_2", "5_3", 
+                "11_1", "4_2", "4_3", "4_4", "7_3")   
+  
+  split_comma <- str_detect(ind_raw, ",") & !(measure %in% no_split)
+  
+  indicator <- if_else(split_comma,
                        str_extract(ind_raw, "^[^,]+") %>% trimws(),
                        ind_raw)
-  unit      <- if_else(str_detect(ind_raw, ","),
+  unit      <- if_else(split_comma,
                        str_remove(ind_raw, "^[^,]+,") %>% trimws(),
                        ind_raw)
   
@@ -41,9 +46,11 @@ parse_block <- function(block) {
     str_extract("(?<=\nDefinition:)[\\s\\S]*?(?=\nSource:)") %>%
     str_replace_all("\\s+", " ") %>% trimws()
   
-  # Extract dep / vert sentences
-  dep_sent  <- str_extract(definition, "(?i)Deprivation[^.]+\\.")
-  vert_sent <- str_extract(definition, "(?i)Vertical inequality[^.]+\\.")
+  abbr_guard <- "(?<!\\bi\\.e)(?<!\\be\\.g)(?<!\\betc)(?<!\\bi\\.e\\.)(?<!\\be\\.g\\.)"
+  sent_end   <- "\\.(?=\\s+[A-Z]|\\s*$)"
+  
+  dep_sent  <- str_extract(definition, paste0("(?i)Deprivation.*?", abbr_guard, sent_end))
+  vert_sent <- str_extract(definition, paste0("(?i)Vertical inequality.*?", abbr_guard, sent_end))
   
   tibble(
     measure    = measure,
@@ -120,7 +127,18 @@ result <- bind_rows(base, dep_rows, vert_rows) %>%
   mutate(definition = str_remove_all(definition, "WELL-BEING DATABASE: DEFINITIONS AND METADATA"),
          definition = str_remove_all(definition, "OECD HOW’S LIFE\\?"),
          definition = str_remove_all(definition, "\\ \\d+"),
+         definition = str_remove_all(definition, "\\d+ \\"),
          definition = trimws(definition),
+         definition = str_replace_all(definition, "•", "<br>•"),
+         definition = str_replace_all(definition, "Due to the small", "<br><br>Due to the small"),
+         definition = str_replace_all(definition, "Deprivation", "<br><br>Deprivation"),
+         definition = str_replace_all(definition, "Vertical inequality", "<br><br>Vertical inequality"),
+         unit = case_when(
+           str_starts(unit, "as a ") ~ str_remove(unit, "^as a "),
+           TRUE ~ unit
+         ),
+         unit = str_remove_all(unit, "Measured in"),
+         unit = str_replace(unit, "^(.)", toupper),
          note = case_when(
            measure %in% c("1_3", "1_3_VER", "1_6", "8_2") ~ "The OECD average is calculated using a last observation carried forward approach, whereby each country’s most recent available observation is carried forward to 
                                                subsequent years until updated data become available. This method allows for the construction of a consistent time series for the OECD average in the presence of 
@@ -134,5 +152,5 @@ result <- bind_rows(base, dep_rows, vert_rows) %>%
   arrange(measure) 
 
 
-openxlsx::write.xlsx(result, "\\\\FS19-AZ-CH-1.main.oecd.org/SdataWIS/Data/WDP/Well being database/Data Monitor/data_monitor/text tidying/definitions.xlsx")
+openxlsx::write.xlsx(result, "\\\\FS19-AZ-CH-1.main.oecd.org/SdataWIS/Data/WDP/Well being database/Data Monitor/data_monitor/hows_life_dictionary.xlsx")
 
