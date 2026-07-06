@@ -311,10 +311,8 @@ server <- function(input, output, session) {
     
     req(input$clicked_class)
     
-    long_df <- openxlsx::read.xlsx("./data/hows_life_dictionary.xlsx") %>%
-      select(measure, label = label.x, indicator = indicator.x, unit = unit.x, definition = definition.x, note)
-
-    # https://github.com/kate-chalmers/data_monitor/raw/refs/heads/main/hows_life_dictionary_fr.xlsx
+    long_df <- openxlsx::read.xlsx("https://github.com/kate-chalmers/data_monitor/raw/refs/heads/main/hows_life_dictionary.xlsx") 
+    
     # heatmap_dat <- readRDS("./data/final dataset.RDS")
     
     short_df <- long_df %>% filter(measure == input$clicked_class)
